@@ -74,9 +74,11 @@ def serve_web_interface():
     <!DOCTYPE html>
     <html lang="en">
     <head>
+        <meta name="google-site-verification" content="google-site-verification: google808a5c53bf1c2332.html" />
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Jeryaz AI - Powered by Touati</title>
+
         <script src="https://unpkg.com/lucide@latest"></script>
         <style>
             :root {
