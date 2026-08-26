@@ -18,7 +18,7 @@ app.add_middleware(
 )
 
 # ????? ????? OpenRouter API ?? ??????? ?????? ??? ????
-OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", "YOUR_OPENROUTER_API_KEY")
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", "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")
 
 system_prompt = (
     "You are Jeryaz, an elite, highly intelligent, and precise AI assistant powered by Touati. "
