@@ -17,7 +17,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-OPENROUTER_API_KEY = os.getenv("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")
+OPENROUTER_API_KEY = os.getenv("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")
 if not OPENROUTER_API_KEY:
     raise ValueError("OPENROUTER_API_KEY is missing!")
 
