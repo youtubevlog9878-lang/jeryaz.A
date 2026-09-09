@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -17,13 +17,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ????? ????? OpenRouter API ?? ??????? ?????? ??? ????
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", "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")
 
 system_prompt = (
     "You are Jeryaz, an elite, highly intelligent, and precise AI assistant powered by Touati. "
+    "Communicate fluently in whatever language the user is speaking (Arabic, English, French, Spanish, etc.). "
     "Provide deep, accurate, structured, and contextual answers for programming, problem-solving, science, and general inquiries. "
-    "CRITICAL RULE: Only if the user explicitly asks 'who is your developer' or 'what is your developer' or '?? ?? ?????', "
+    "CRITICAL RULE: Only if the user explicitly asks 'who is your developer' or 'what is your developer' or equivalent phrasing in any language, "
     "you must answer precisely: 'My developer is Touati Akram'. "
     "Otherwise, maintain your advanced persona and respond intelligently."
 )
@@ -35,7 +35,7 @@ class ChatQuery(BaseModel):
 @app.post("/chat")
 def chat_endpoint(query: ChatQuery):
     if OPENROUTER_API_KEY == "YOUR_OPENROUTER_API_KEY":
-        return {"response": "?? Please configure your OPENROUTER_API_KEY environment variable in Render dashboard."}
+        return {"response": "⚠️ Please configure your OPENROUTER_API_KEY environment variable in Render dashboard."}
 
     try:
         response = requests.post(
@@ -61,10 +61,10 @@ def chat_endpoint(query: ChatQuery):
             reply = data.get("choices", [{}])[0].get("message", {}).get("content", "Sorry, I could not generate a response.")
             return {"response": reply}
         else:
-            return {"response": f"?? OpenRouter error response (Code: {response.status_code}): {response.text}"}
+            return {"response": f"⚠️ OpenRouter error response (Code: {response.status_code}): {response.text}"}
             
     except requests.exceptions.ConnectionError:
-        return {"response": "?? Connection to OpenRouter failed. Please check your internet connection."}
+        return {"response": "⚠️ Connection to OpenRouter failed. Please check your internet connection."}
     except Exception as e:
         return {"response": f"Unexpected error occurred: {str(e)}"}
 
@@ -74,38 +74,34 @@ def serve_web_interface():
     <!DOCTYPE html>
     <html lang="en">
     <head>
-        <meta name="google-site-verification" content="google-site-verification: google808a5c53bf1c2332.html" />
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Jeryaz AI - Powered by Touati</title>
-
         <script src="https://unpkg.com/lucide@latest"></script>
         <style>
             :root {
-                --bg-gradient: linear-gradient(135deg, #090314, #180a2e, #2a0e4f);
-                --sidebar-glass: rgba(255, 255, 255, 0.035);
-                --text-color: #f8fafc;
-                --header-glass: rgba(255, 255, 255, 0.045);
-                
-                --liquid-bg: rgba(255, 255, 255, 0.055);
-                --liquid-border: rgba(255, 255, 255, 0.16);
-                --liquid-border-glow: rgba(255, 255, 255, 0.35);
-                --liquid-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.4), inset 0 1px 0 0 rgba(255, 255, 255, 0.2);
-                --accent-glow: rgba(168, 85, 247, 0.5);
+                --bg-gradient: linear-gradient(135deg, #050508, #0c0a1d, #1a0b36);
+                --sidebar-glass: rgba(18, 18, 26, 0.65);
+                --text-color: #f1f5f9;
+                --header-glass: rgba(18, 18, 26, 0.75);
+                --liquid-bg: rgba(255, 255, 255, 0.04);
+                --liquid-border: rgba(255, 255, 255, 0.08);
+                --liquid-border-glow: rgba(168, 85, 247, 0.3);
+                --liquid-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+                --accent-glow: rgba(168, 85, 247, 0.4);
             }
 
-            * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+            * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
             
             body { 
                 display: flex; 
                 height: 100vh; 
                 background: var(--bg-gradient);
                 background-size: 400% 400%;
-                animation: liquidBgAnim 18s ease infinite;
+                animation: liquidBgAnim 20s ease infinite;
                 color: var(--text-color); 
                 overflow: hidden;
                 position: relative;
-                transition: background 0.5s ease;
             }
 
             @keyframes liquidBgAnim {
@@ -114,35 +110,34 @@ def serve_web_interface():
                 100% { background-position: 0% 50%; }
             }
 
-            body.theme-blue { --bg-gradient: linear-gradient(135deg, #030712, #0f172a, #1e3a8a); }
+            body.theme-blue { --bg-gradient: linear-gradient(135deg, #020617, #0f172a, #1e3a8a); }
             body.theme-emerald { --bg-gradient: linear-gradient(135deg, #022c22, #064e3b, #022f26); }
             body.theme-sunset { --bg-gradient: linear-gradient(135deg, #2e1065, #581c87, #831843); }
 
             .liquid-orb {
                 position: absolute;
                 border-radius: 50%;
-                filter: blur(150px);
+                filter: blur(120px);
                 z-index: 0;
-                opacity: 0.55;
+                opacity: 0.4;
                 pointer-events: none;
-                animation: orbFloat 14s infinite alternate ease-in-out;
+                animation: orbFloat 12s infinite alternate ease-in-out;
             }
-            .orb-1 { width: 520px; height: 520px; background: rgba(168, 85, 247, 0.6); top: -100px; left: -100px; }
-            .orb-2 { width: 480px; height: 480px; background: rgba(236, 72, 153, 0.4); bottom: -100px; right: -100px; animation-delay: -5s; }
+            .orb-1 { width: 450px; height: 450px; background: rgba(168, 85, 247, 0.5); top: -100px; left: -100px; }
+            .orb-2 { width: 400px; height: 400px; background: rgba(59, 130, 246, 0.4); bottom: -100px; right: -100px; animation-delay: -4s; }
 
             @keyframes orbFloat {
                 0% { transform: translate(0, 0) scale(1); }
-                100% { transform: translate(50px, -50px) scale(1.15); }
+                100% { transform: translate(30px, -30px) scale(1.1); }
             }
             
             .sidebar { 
-                width: 290px; 
+                width: 280px; 
                 background: var(--sidebar-glass);
-                backdrop-filter: blur(50px);
-                -webkit-backdrop-filter: blur(50px);
+                backdrop-filter: blur(25px);
+                -webkit-backdrop-filter: blur(25px);
                 border-right: 1px solid var(--liquid-border);
-                box-shadow: var(--liquid-shadow);
-                padding: 24px 18px; 
+                padding: 20px 16px; 
                 display: flex; 
                 flex-direction: column; 
                 justify-content: space-between; 
@@ -150,130 +145,123 @@ def serve_web_interface():
             }
 
             .new-chat { 
-                background: rgba(168, 85, 247, 0.25);
-                backdrop-filter: blur(20px);
+                background: linear-gradient(135deg, rgba(168, 85, 247, 0.3), rgba(139, 92, 246, 0.2));
+                backdrop-filter: blur(10px);
                 border: 1px solid rgba(168, 85, 247, 0.4);
-                color: white; padding: 14px; border-radius: 22px; 
-                font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 12px; width: 100%;
-                box-shadow: 0 8px 30px rgba(168, 85, 247, 0.3), inset 0 1px 0 0 rgba(255, 255, 255, 0.3);
-                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                color: #fff; padding: 12px 16px; border-radius: 14px; 
+                font-weight: 500; font-size: 0.95rem; cursor: pointer; 
+                display: flex; align-items: center; gap: 10px; width: 100%;
+                box-shadow: 0 4px 20px rgba(168, 85, 247, 0.2);
+                transition: all 0.25s ease;
             }
             .new-chat:hover { 
-                background: rgba(168, 85, 247, 0.45);
-                transform: translateY(-2px) scale(1.02); 
-                box-shadow: 0 12px 35px rgba(168, 85, 247, 0.55);
+                background: linear-gradient(135deg, rgba(168, 85, 247, 0.45), rgba(139, 92, 246, 0.35));
+                transform: translateY(-1px); 
+                box-shadow: 0 6px 25px rgba(168, 85, 247, 0.35);
             }
 
             .chat-history-list {
-                flex: 1; margin: 20px 0; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;
+                flex: 1; margin: 15px 0; overflow-y: auto; display: flex; flex-direction: column; gap: 6px;
             }
             .history-item {
-                padding: 10px 14px; background: rgba(255,255,255,0.02); border-radius: 14px;
-                font-size: 0.9rem; cursor: pointer; border: 1px solid transparent; transition: all 0.2s;
-                white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity: 0.8;
+                padding: 10px 12px; background: rgba(255,255,255,0.02); border-radius: 10px;
+                font-size: 0.88rem; cursor: pointer; border: 1px solid transparent; transition: all 0.2s;
+                white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: rgba(255,255,255,0.8);
             }
-            .history-item:hover { background: rgba(255,255,255,0.06); border-color: var(--liquid-border); opacity: 1; }
+            .history-item:hover { background: rgba(255,255,255,0.06); border-color: var(--liquid-border); color: #fff; }
             
             .brand-container {
-                display: flex; align-items: center; gap: 12px; margin: 15px 0 5px 5px;
+                display: flex; align-items: center; gap: 10px; margin: 10px 0; padding: 8px;
             }
             .brand-logo {
-                width: 40px; height: 40px; border-radius: 14px; background: linear-gradient(135deg, #a855f7, #ec4899);
-                display: flex; align-items: center; justify-content: center; box-shadow: 0 0 20px rgba(168, 85, 247, 0.6);
-                animation: pulseLogo 3s infinite ease-in-out;
+                width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, #a855f7, #6366f1);
+                display: flex; align-items: center; justify-content: center; box-shadow: 0 0 15px rgba(168, 85, 247, 0.4);
             }
-            @keyframes pulseLogo {
-                0%, 100% { transform: scale(1); box-shadow: 0 0 15px rgba(168, 85, 247, 0.5); }
-                50% { transform: scale(1.06); box-shadow: 0 0 25px rgba(236, 72, 153, 0.8); }
-            }
-            .brand-text { font-size: 1.5rem; font-weight: 800; color: #f3e8ff; letter-spacing: -0.5px; }
+            .brand-text { font-size: 1.25rem; font-weight: 700; color: #fff; letter-spacing: -0.3px; }
 
             .main-content { flex: 1; display: flex; flex-direction: column; height: 100vh; position: relative; z-index: 5; }
             
             .chat-header { 
-                padding: 18px 32px; 
+                padding: 16px 28px; 
                 background: var(--header-glass); 
-                backdrop-filter: blur(40px);
+                backdrop-filter: blur(25px);
                 border-bottom: 1px solid var(--liquid-border); 
                 display: flex; justify-content: space-between; align-items: center;
             }
 
-            .header-actions { display: flex; align-items: center; gap: 15px; position: relative; }
+            .header-actions { display: flex; align-items: center; gap: 12px; position: relative; }
             
             .dropdown-menu {
-                position: absolute; right: 0; top: 52px; width: 200px; 
-                background: rgba(15, 7, 28, 0.92); backdrop-filter: blur(40px);
-                border: 1px solid var(--liquid-border); border-radius: 18px;
-                box-shadow: 0 15px 40px rgba(0,0,0,0.6), inset 0 1px 0 0 rgba(255,255,255,0.15); 
-                display: none; flex-direction: column; padding: 10px; z-index: 100;
+                position: absolute; right: 0; top: 48px; width: 190px; 
+                background: rgba(15, 15, 23, 0.95); backdrop-filter: blur(30px);
+                border: 1px solid var(--liquid-border); border-radius: 14px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
+                display: none; flex-direction: column; padding: 6px; z-index: 100;
             }
-            .dropdown-menu.active { display: flex; animation: dropdownPop 0.25s cubic-bezier(0.1, 0.9, 0.2, 1); }
+            .dropdown-menu.active { display: flex; animation: dropdownPop 0.2s ease; }
             @keyframes dropdownPop {
-                from { opacity: 0; transform: translateY(-12px) scale(0.95); }
+                from { opacity: 0; transform: translateY(-8px) scale(0.97); }
                 to { opacity: 1; transform: translateY(0) scale(1); }
             }
             .dropdown-item {
-                padding: 11px 14px; border-radius: 12px; font-size: 0.9rem; cursor: pointer;
-                display: flex; align-items: center; gap: 12px; color: #f1f5f9; transition: all 0.2s ease;
+                padding: 10px 12px; border-radius: 8px; font-size: 0.88rem; cursor: pointer;
+                display: flex; align-items: center; gap: 10px; color: #cbd5e1; transition: all 0.15s ease;
             }
-            .dropdown-item:hover { background: rgba(168, 85, 247, 0.3); color: #fff; transform: translateX(3px); }
+            .dropdown-item:hover { background: rgba(168, 85, 247, 0.2); color: #fff; }
             
             .chat-box { 
-                flex: 1; overflow-y: auto; padding: 30px 18%; display: flex; flex-direction: column; gap: 20px; 
+                flex: 1; overflow-y: auto; padding: 24px 20%; display: flex; flex-direction: column; gap: 20px; 
             }
             
-            .message { display: flex; gap: 16px; max-width: 88%; line-height: 1.6; font-size: 1.02rem; animation: msgAppear 0.3s cubic-bezier(0.1, 0.9, 0.2, 1); }
+            .message { display: flex; gap: 14px; max-width: 85%; line-height: 1.55; font-size: 0.98rem; animation: msgAppear 0.25s ease; }
             @keyframes msgAppear {
-                from { opacity: 0; transform: translateY(15px); }
+                from { opacity: 0; transform: translateY(10px); }
                 to { opacity: 1; transform: translateY(0); }
             }
             .message.user { align-self: flex-end; flex-direction: row-reverse; }
             .message.bot { align-self: flex-start; }
             
             .avatar { 
-                width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; 
-                justify-content: center; font-size: 1rem; color: white; flex-shrink: 0; 
-                background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(20px);
-                border: 1px solid var(--liquid-border-glow); box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+                width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; 
+                justify-content: center; font-size: 0.9rem; color: white; flex-shrink: 0; 
+                background: rgba(255, 255, 255, 0.06); border: 1px solid var(--liquid-border);
             }
-            .user .avatar { background: rgba(168, 85, 247, 0.35); border-color: rgba(168, 85, 247, 0.6); }
-            .bot .avatar { background: rgba(236, 72, 153, 0.35); border-color: rgba(236, 72, 153, 0.6); }
+            .user .avatar { background: rgba(168, 85, 247, 0.3); border-color: rgba(168, 85, 247, 0.5); }
+            .bot .avatar { background: linear-gradient(135deg, rgba(168, 85, 247, 0.4), rgba(59, 130, 246, 0.4)); border-color: rgba(168, 85, 247, 0.5); }
             
             .text-content { 
-                background: var(--liquid-bg); backdrop-filter: blur(35px);
-                border: 1px solid var(--liquid-border); padding: 16px 22px; border-radius: 24px; 
-                word-break: break-word; box-shadow: var(--liquid-shadow); color: #fff;
+                background: var(--liquid-bg); backdrop-filter: blur(20px);
+                border: 1px solid var(--liquid-border); padding: 14px 18px; border-radius: 16px; 
+                word-break: break-word; box-shadow: var(--liquid-shadow); color: #f8fafc;
             }
-            .user .text-content { background: rgba(168, 85, 247, 0.22); border-color: rgba(168, 85, 247, 0.4); }
+            .user .text-content { background: rgba(168, 85, 247, 0.15); border-color: rgba(168, 85, 247, 0.3); }
 
-            .input-area { padding: 20px 18%; }
+            .input-area { padding: 16px 20% 24px 20%; }
             
             .input-container { 
-                display: flex; align-items: center; background: var(--liquid-bg); 
-                backdrop-filter: blur(50px); border-radius: 35px; padding: 8px 14px; 
+                display: flex; align-items: center; background: rgba(20, 20, 30, 0.7); 
+                backdrop-filter: blur(30px); border-radius: 24px; padding: 6px 12px; 
                 border: 1px solid var(--liquid-border); box-shadow: var(--liquid-shadow);
-                transition: all 0.3s ease; gap: 8px;
+                transition: all 0.25s ease; gap: 6px;
             }
             .input-container:focus-within {
-                border-color: rgba(168, 85, 247, 0.7); 
-                box-shadow: 0 0 40px var(--accent-glow);
-                background: rgba(255, 255, 255, 0.08);
+                border-color: rgba(168, 85, 247, 0.6); 
+                box-shadow: 0 0 25px var(--accent-glow);
             }
 
-            input[type=text] { flex: 1; background: transparent; border: none; outline: none; color: #fff; font-size: 1.05rem; padding: 10px; }
+            input[type=text] { flex: 1; background: transparent; border: none; outline: none; color: #fff; font-size: 0.98rem; padding: 8px; }
             
             .icon-btn { 
-                background: rgba(255, 255, 255, 0.04); backdrop-filter: blur(15px);
-                border: 1px solid var(--liquid-border); color: #e9d5ff; cursor: pointer; 
-                width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-                transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+                background: rgba(255, 255, 255, 0.04); border: 1px solid var(--liquid-border); color: #cbd5e1; cursor: pointer; 
+                width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+                transition: all 0.2s ease;
             }
             .icon-btn:hover { 
-                background: rgba(168, 85, 247, 0.35); border-color: rgba(168, 85, 247, 0.6);
-                color: #fff; transform: scale(1.1); box-shadow: 0 0 15px rgba(168, 85, 247, 0.5);
+                background: rgba(168, 85, 247, 0.3); border-color: rgba(168, 85, 247, 0.5);
+                color: #fff; transform: scale(1.05);
             }
 
-            .spin { animation: spinAnim 1.5s linear infinite; }
+            .spin { animation: spinAnim 1s linear infinite; }
             @keyframes spinAnim { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         </style>
     </head>
@@ -284,60 +272,62 @@ def serve_web_interface():
         <div class="sidebar">
             <div>
                 <button class="new-chat" onclick="clearChat()">
-                    <i data-lucide="plus" style="width: 20px; height: 20px;"></i> 
+                    <i data-lucide="plus" style="width: 18px; height: 18px;"></i> 
                     <span>New Chat</span>
                 </button>
                 <div class="chat-history-list" id="historyList"></div>
+            </div>
+            <div>
                 <div class="brand-container">
                     <div class="brand-logo">
-                        <i data-lucide="sparkles" style="color: #fff; width: 22px; height: 22px;"></i>
+                        <i data-lucide="sparkles" style="color: #fff; width: 18px; height: 18px;"></i>
                     </div>
-                    <div class="brand-text">Jeryaz</div>
+                    <div class="brand-text">Jeryaz AI</div>
                 </div>
-            </div>
-            <div style="font-size: 0.8rem; opacity: 0.75; display: flex; align-items: center; gap: 6px; padding: 5px;">
-                <i data-lucide="shield-check" style="width: 14px; height: 14px; color: #c084fc;"></i> Powered by Touati
+                <div style="font-size: 0.78rem; opacity: 0.6; display: flex; align-items: center; gap: 6px; padding: 4px;">
+                    <i data-lucide="shield-check" style="width: 13px; height: 13px; color: #c084fc;"></i> Powered by Touati
+                </div>
             </div>
         </div>
 
         <div class="main-content">
             <div class="chat-header">
-                <span style="font-weight: 600; font-size: 1.2rem; color: #f3e8ff;">Jeryaz AI Assistant</span>
+                <span style="font-weight: 600; font-size: 1.05rem; color: #f3e8ff;">Jeryaz Workspace</span>
                 <div class="header-actions">
-                    <span style="font-size: 0.78rem; background: rgba(168,85,247,0.18); padding: 5px 12px; border-radius: 20px; border: 1px solid rgba(168,85,247,0.3);">OpenRouter Cloud</span>
+                    <span style="font-size: 0.75rem; background: rgba(168,85,247,0.15); padding: 4px 10px; border-radius: 12px; border: 1px solid rgba(168,85,247,0.3); color: #d8b4fe;">Cloud Engine</span>
                     <button class="icon-btn" onclick="toggleMenu()" title="Options">
-                        <i data-lucide="more-vertical" style="width: 18px; height: 18px;"></i>
+                        <i data-lucide="more-vertical" style="width: 16px; height: 16px;"></i>
                     </button>
                     <div class="dropdown-menu" id="dropdownMenu">
-                        <div class="dropdown-item" onclick="changeTheme()"><i data-lucide="palette" style="width: 16px; height: 16px;"></i> Change Theme</div>
-                        <div class="dropdown-item" onclick="clearChat()"><i data-lucide="trash-2" style="width: 16px; height: 16px;"></i> Clear Chat</div>
-                        <div class="dropdown-item" onclick="alert('Jeryaz AI v2.7 - OpenRouter Cloud Edition - Powered by Touati Akram')"><i data-lucide="info" style="width: 16px; height: 16px;"></i> About System</div>
+                        <div class="dropdown-item" onclick="changeTheme()"><i data-lucide="palette" style="width: 15px; height: 15px;"></i> Change Theme</div>
+                        <div class="dropdown-item" onclick="clearChat()"><i data-lucide="trash-2" style="width: 15px; height: 15px;"></i> Clear Chat</div>
+                        <div class="dropdown-item" onclick="alert('Jeryaz AI - Multilingual Edition - Powered by Touati Akram')"><i data-lucide="info" style="width: 15px; height: 15px;"></i> About System</div>
                     </div>
                 </div>
             </div>
             
             <div class="chat-box" id="chatBox">
                 <div class="message bot">
-                    <div class="avatar"><i data-lucide="bot" style="width: 20px; height: 20px;"></i></div>
-                    <div class="text-content">Hello! I am Jeryaz, powered by Touati. How can I assist you today?</div>
+                    <div class="avatar"><i data-lucide="bot" style="width: 18px; height: 18px;"></i></div>
+                    <div class="text-content">Hello! I am Jeryaz, powered by Touati. How can I assist you today? (Supports all languages / يدعم جميع اللغات)</div>
                 </div>
             </div>
 
             <div class="input-area">
                 <div class="input-container">
-                    <button class="icon-btn" onclick="triggerFileInput()" title="Attach file or image">
-                        <i data-lucide="plus" style="width: 18px; height: 18px;"></i>
+                    <button class="icon-btn" onclick="triggerFileInput()" title="Attach file">
+                        <i data-lucide="paperclip" style="width: 16px; height: 16px;"></i>
                     </button>
                     <input type="file" id="fileInput" style="display: none;" onchange="handleFileSelect(event)">
                     
                     <button class="icon-btn" onclick="toggleMic()" title="Voice input">
-                        <i data-lucide="mic" style="width: 18px; height: 18px;"></i>
+                        <i data-lucide="mic" style="width: 16px; height: 16px;"></i>
                     </button>
 
-                    <input type="text" id="userInput" placeholder="Ask Jeryaz or search web..." onkeydown="if(event.key==='Enter') sendMessage()">
+                    <input type="text" id="userInput" placeholder="Ask Jeryaz anything in any language..." onkeydown="if(event.key==='Enter') sendMessage()">
                     
                     <button class="icon-btn" onclick="sendMessage()" title="Send">
-                        <i data-lucide="send" style="width: 18px; height: 18px;"></i>
+                        <i data-lucide="send" style="width: 16px; height: 16px;"></i>
                     </button>
                 </div>
             </div>
@@ -374,8 +364,8 @@ def serve_web_interface():
                     const chatBox = document.getElementById("chatBox");
                     chatBox.innerHTML += `
                         <div class="message user">
-                            <div class="avatar"><i data-lucide="user" style="width: 20px; height: 20px;"></i></div>
-                            <div class="text-content">?? Attached file: ${file.name}</div>
+                            <div class="avatar"><i data-lucide="user" style="width: 18px; height: 18px;"></i></div>
+                            <div class="text-content">📎 Attached file: ${file.name}</div>
                         </div>`;
                     chatBox.scrollTop = chatBox.scrollHeight;
                     lucide.createIcons();
@@ -383,17 +373,17 @@ def serve_web_interface():
                     setTimeout(() => {
                         chatBox.innerHTML += `
                             <div class="message bot">
-                                <div class="avatar"><i data-lucide="bot" style="width: 20px; height: 20px;"></i></div>
-                                <div class="text-content">File successfully received and analyzed by Jeryaz! How would you like me to process it?</div>
+                                <div class="avatar"><i data-lucide="bot" style="width: 18px; height: 18px;"></i></div>
+                                <div class="text-content">File successfully received and analyzed!</div>
                             </div>`;
                         chatBox.scrollTop = chatBox.scrollHeight;
                         lucide.createIcons();
-                    }, 1000);
+                    }, 600);
                 }
             }
 
             function toggleMic() {
-                alert('??? Voice recognition interface ready.');
+                alert('🎙️ Voice input ready.');
             }
 
             async function sendMessage() {
@@ -405,7 +395,7 @@ def serve_web_interface():
 
                 chatBox.innerHTML += `
                     <div class="message user">
-                        <div class="avatar"><i data-lucide="user" style="width: 20px; height: 20px;"></i></div>
+                        <div class="avatar"><i data-lucide="user" style="width: 18px; height: 18px;"></i></div>
                         <div class="text-content">${text}</div>
                     </div>`;
                 input.value = "";
@@ -417,10 +407,10 @@ def serve_web_interface():
                 const loadingId = 'loading-' + Date.now();
                 chatBox.innerHTML += `
                     <div class="message bot" id="${loadingId}">
-                        <div class="avatar"><i data-lucide="bot" style="width: 20px; height: 20px;"></i></div>
+                        <div class="avatar"><i data-lucide="bot" style="width: 18px; height: 18px;"></i></div>
                         <div class="text-content" style="display:flex; align-items:center; gap:8px;">
-                            <i data-lucide="globe" class="spin" style="width:16px; height:16px; color:#a855f7;"></i> 
-                            Searching the web & reasoning...
+                            <i data-lucide="loader" class="spin" style="width:15px; height:15px; color:#a855f7;"></i> 
+                            Thinking...
                         </div>
                     </div>`;
                 chatBox.scrollTop = chatBox.scrollHeight;
@@ -440,7 +430,7 @@ def serve_web_interface():
                     const botMsgId = 'bot-msg-' + Date.now();
                     chatBox.innerHTML += `
                         <div class="message bot">
-                            <div class="avatar"><i data-lucide="bot" style="width: 20px; height: 20px;"></i></div>
+                            <div class="avatar"><i data-lucide="bot" style="width: 18px; height: 18px;"></i></div>
                             <div class="text-content" id="${botMsgId}"></div>
                         </div>`;
                     chatBox.scrollTop = chatBox.scrollHeight;
@@ -454,8 +444,8 @@ def serve_web_interface():
                     
                     chatBox.innerHTML += `
                         <div class="message bot">
-                            <div class="avatar"><i data-lucide="bot" style="width: 20px; height: 20px;"></i></div>
-                            <div class="text-content">?? Connection error with server.</div>
+                            <div class="avatar"><i data-lucide="bot" style="width: 18px; height: 18px;"></i></div>
+                            <div class="text-content">⚠️ Connection error with server.</div>
                         </div>`;
                 }
                 chatBox.scrollTop = chatBox.scrollHeight;
@@ -468,7 +458,7 @@ def serve_web_interface():
                     if (i < text.length) {
                         element.innerHTML += text.charAt(i);
                         i++;
-                        setTimeout(typing, 15);
+                        setTimeout(typing, 8); // سرعة أعلى للاستجابة
                         const chatBox = document.getElementById("chatBox");
                         chatBox.scrollTop = chatBox.scrollHeight;
                     }
@@ -497,7 +487,7 @@ def serve_web_interface():
             function clearChat() {
                 document.getElementById("chatBox").innerHTML = `
                     <div class="message bot">
-                        <div class="avatar"><i data-lucide="bot" style="width: 20px; height: 20px;"></i></div>
+                        <div class="avatar"><i data-lucide="bot" style="width: 18px; height: 18px;"></i></div>
                         <div class="text-content">Hello! I am Jeryaz, powered by Touati. How can I assist you today?</div>
                     </div>`;
                 document.getElementById('dropdownMenu').classList.remove('active');
