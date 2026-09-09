@@ -20,6 +20,7 @@ app.add_middleware(
 OPENROUTER_API_KEY = os.getenv("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")
 if not OPENROUTER_API_KEY:
     raise ValueError("OPENROUTER_API_KEY is missing!")
+    
 system_prompt = (
     "You are Jeryaz, an elite, highly intelligent, and precise AI assistant powered by Touati. "
     "Communicate fluently in whatever language the user is speaking (Arabic, English, French, Spanish, etc.). "
